@@ -1,9 +1,8 @@
-c// src/routes/userRoutes.js (trecho do arquivo)
 const express = require('express');
 const router = express.Router();
 const AppError = require('../utils/AppError');
-const validate = require('../middlewares/validate'); // Importa o middleware
-const { createUserSchema } = require('../schemas/userSchema'); // Importa o schema
+const validate = require('../middlewares/validate');
+const { createUserSchema } = require('../schema/userSchema');
 
 let users = [{ id: 1, name: 'João Silva', email: 'joaodasisi@email.com' }];
 
@@ -39,7 +38,6 @@ router.get('/users', (req, res) => {
  *       400:
  *         description: Dados de requisição inválidos
  */
-// APLICADO O MIDDLEWARE DE VALIDAÇÃO ANTES DO HANDLER DA ROTA:
 router.post('/users', validate(createUserSchema), (req, res) => {
   const { name, email } = req.body;
 
