@@ -1,8 +1,11 @@
-require('express-async-errors'); // Captura exceções em funções assíncronas automaticamente
+require('express-async-errors');
+require('dotenv').config();
 const express = require('express');
 const swaggerUi = require('swagger-ui-express');
 const swaggerSpecs = require('./config/swagger');
+const { connectDB } = require('./config/database');
 const userRoutes = require('./routes/userRoutes');
+const todoRoutes = require('./routes/todoRoutes');
 const errorHandler = require('./middlewares/errorHandler');
 
 const app = express();
@@ -16,12 +19,22 @@ app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpecs)); // Serve a
 
 // 3. Registrar Rotas da aplicação
 app.use('/api', userRoutes);
+app.use('/api', todoRoutes);
 
 // 4. Middleware Global de Tratamento de Erros (DEVE FICAR POR ÚLTIMO)
 app.use(errorHandler); //
 
-// Iniciar o servidor
-app.listen(PORT, () => {
-  console.log(`Servidor rodando em: http://localhost:${PORT}`);
-  console.log(` Documentação Swagger em: http://localhost:${PORT}/api-docs`);
-});
+const startServer = async () => {
+  const connected = await connectDB();
+
+  if (!connected) {
+    console.log('Continuando em modo sem banco de dados.');
+  }
+
+  app.listen(PORT, () => {
+    console.log(`Servidor rodando em: http://localhost:${PORT}`);
+    console.log(`Documentação Swagger em: http://localhost:${PORT}/api-docs`);
+  });
+};
+
+startServer();
